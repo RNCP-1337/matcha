@@ -22,7 +22,7 @@ services:
     container_name: matcha_mail
     restart: unless-stopped
     ports:
-      - "${SMTP_PORT:-1085}:1025"
+      - "${MAILPIT_SMTP_PORT:-1085}:1025"
       - "${MAILUI_PORT:-8085}:8025"
     environment:
       MP_SMTP_AUTH_ACCEPT_ANY: 1

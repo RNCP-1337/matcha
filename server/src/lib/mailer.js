@@ -23,7 +23,7 @@ function getTransport() {
     port: config.mail.port,
     secure: config.mail.secure,
     auth: config.mail.user ? { user: config.mail.user, pass: config.mail.password } : undefined,
-    tls: { rejectUnauthorized: config.isProduction },
+    tls: { rejectUnauthorized: config.isProduction || !['localhost', '127.0.0.1'].includes(config.mail.host) },
   });
   return transport;
 }
