@@ -1,0 +1,32 @@
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: matcha_db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${PGUSER:-matcha}
+      POSTGRES_PASSWORD: ${PGPASSWORD:-matcha}
+      POSTGRES_DB: ${PGDATABASE:-matcha}
+    ports:
+      - "${PGPORT:-5455}:5432"
+    volumes:
+      - matcha_pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${PGUSER:-matcha} -d ${PGDATABASE:-matcha}"]
+      interval: 3s
+      timeout: 3s
+      retries: 20
+
+  mail:
+    image: axllent/mailpit:latest
+    container_name: matcha_mail
+    restart: unless-stopped
+    ports:
+      - "${SMTP_PORT:-1085}:1025"
+      - "${MAILUI_PORT:-8085}:8025"
+    environment:
+      MP_SMTP_AUTH_ACCEPT_ANY: 1
+      MP_SMTP_AUTH_ALLOW_INSECURE: 1
+
+volumes:
+  matcha_pgdata:

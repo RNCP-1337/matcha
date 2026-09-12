@@ -1,0 +1,15 @@
+.env
+.env.local
+node_modules/
+dist/
+build/
+server/uploads/*
+!server/uploads/.gitkeep
+server/tmp/
+.pgdata/
+*.log
+.DS_Store
+.vscode/
+.idea/
+
+DEFENSE.md
