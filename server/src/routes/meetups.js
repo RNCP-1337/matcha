@@ -2,7 +2,7 @@ import { Router } from 'express';
 import { many, one, query } from '../db/pool.js';
 import { badRequest, forbidden, notFound } from '../lib/httpError.js';
 import { pushNotification } from '../lib/notify.js';
-import { collect, requireBody } from '../lib/validate.js';
+import { parseId, collect, requireBody } from '../lib/validate.js';
 import { asyncRoute } from '../middleware/errors.js';
 import { requireAuth } from '../middleware/session.js';
 import { sendToUser } from '../realtime/hub.js';
@@ -114,7 +114,7 @@ router.get(
 router.get(
   '/with/:id',
   asyncRoute(async (req, res) => {
-    const partnerId = Number.parseInt(req.params.id, 10);
+    const partnerId = parseId(req.params.id);
     await requireConnection(req.user.id, partnerId);
 
     const rows = await many(
@@ -129,7 +129,7 @@ router.post(
   '/',
   asyncRoute(async (req, res) => {
     const body = requireBody(req.body);
-    const inviteeId = Number.parseInt(body.inviteeId, 10);
+    const inviteeId = parseId(body.inviteeId);
     await requireConnection(req.user.id, inviteeId);
 
     const values = collect({
@@ -165,7 +165,7 @@ router.post(
 router.put(
   '/:id',
   asyncRoute(async (req, res) => {
-    const id = Number.parseInt(req.params.id, 10);
+    const id = parseId(req.params.id);
     const body = requireBody(req.body);
     const status = body.status;
 

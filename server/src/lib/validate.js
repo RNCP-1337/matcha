@@ -182,6 +182,13 @@ export function intParam(value, { min, max, fallback }) {
   return number;
 }
 
+export function parseId(value) {
+  const text = String(value ?? '');
+  if (!/^\d{1,10}$/.test(text)) return null;
+  const id = Number(text);
+  return id >= 1 && id <= 2147483647 ? id : null;
+}
+
 export function enumParam(value, allowed, fallback) {
   return allowed.includes(value) ? value : fallback;
 }

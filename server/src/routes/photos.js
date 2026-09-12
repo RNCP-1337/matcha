@@ -6,7 +6,7 @@ import { config } from '../config.js';
 import { many, one, query, transaction } from '../db/pool.js';
 import { recomputeFame } from '../lib/fame.js';
 import { badRequest, notFound } from '../lib/httpError.js';
-import { requireBody } from '../lib/validate.js';
+import { parseId, requireBody } from '../lib/validate.js';
 import { asyncRoute } from '../middleware/errors.js';
 import { requireAuth } from '../middleware/session.js';
 import { detectImageType, uploadImage } from '../middleware/upload.js';
@@ -66,7 +66,7 @@ router.put(
     const body = requireBody(req.body);
     if (!Array.isArray(body.order)) throw badRequest('Send the photo ids in the order you want');
 
-    const wanted = body.order.map((value) => Number.parseInt(value, 10)).filter(Number.isInteger);
+    const wanted = body.order.map((value) => parseId(value)).filter(Number.isInteger);
     const mine = await many('SELECT id FROM photos WHERE user_id = $1', [req.user.id]);
     const owned = new Set(mine.map((row) => row.id));
 
@@ -91,7 +91,7 @@ router.put(
 router.put(
   '/:id/profile',
   asyncRoute(async (req, res) => {
-    const id = Number.parseInt(req.params.id, 10);
+    const id = parseId(req.params.id);
     if (!Number.isInteger(id)) throw badRequest('Invalid photo id');
 
     const photo = await one('SELECT id FROM photos WHERE id = $1 AND user_id = $2', [id, req.user.id]);
@@ -106,7 +106,7 @@ router.put(
 router.delete(
   '/:id',
   asyncRoute(async (req, res) => {
-    const id = Number.parseInt(req.params.id, 10);
+    const id = parseId(req.params.id);
     if (!Number.isInteger(id)) throw badRequest('Invalid photo id');
 
     const photo = await one('SELECT id, filename FROM photos WHERE id = $1 AND user_id = $2', [id, req.user.id]);

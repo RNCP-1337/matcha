@@ -2,7 +2,7 @@ import { Router } from 'express';
 import { many, one, query } from '../db/pool.js';
 import { forbidden, notFound } from '../lib/httpError.js';
 import { pushNotification } from '../lib/notify.js';
-import { checkMessage, collect, intParam, requireBody } from '../lib/validate.js';
+import { parseId, checkMessage, collect, intParam, requireBody } from '../lib/validate.js';
 import { asyncRoute } from '../middleware/errors.js';
 import { requireAuth } from '../middleware/session.js';
 import { sendToUser } from '../realtime/hub.js';
@@ -12,7 +12,7 @@ const router = Router();
 router.use(requireAuth);
 
 async function loadPartner(req) {
-  const id = Number.parseInt(req.params.id, 10);
+  const id = parseId(req.params.id);
   if (!Number.isInteger(id) || id === req.user.id) throw notFound('Conversation not found');
 
   const partner = await one(

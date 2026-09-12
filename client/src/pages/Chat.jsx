@@ -4,7 +4,7 @@ import { ApiError, api } from '../lib/api.js';
 import { Avatar, Empty, Notice, Presence } from '../components/Bits.jsx';
 import CallPanel from '../components/CallPanel.jsx';
 import MeetupPanel from '../components/MeetupPanel.jsx';
-import { clockTime, presenceLabel, relativeTime, shortDate } from '../lib/format.js';
+import { clockTime, presenceLabel, shortDate } from '../lib/format.js';
 import { useApp } from '../state/AppState.jsx';
 
 function sameDay(a, b) {
@@ -172,9 +172,7 @@ export default function Chat() {
                       </Link>
                     </div>
                     <div className="small muted">
-                      {thread.partner.isOnline
-                        ? 'Online now'
-                        : `Last seen ${relativeTime(thread.partner.lastSeen)}`}
+                      {presenceLabel(thread.partner)}
                     </div>
                   </div>
                 </div>

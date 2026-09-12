@@ -12,7 +12,7 @@ export class ApiError extends Error {
 }
 
 async function request(method, path, body) {
-  const headers = {};
+  const headers = { 'x-matcha-client': 'web' };
   const csrf = readCookie('matcha_csrf');
   if (csrf) headers['x-csrf-token'] = csrf;
 
@@ -37,6 +37,10 @@ async function request(method, path, body) {
     } catch {
       data = null;
     }
+  }
+
+  if (data?.softError) {
+    throw new ApiError(data.status, data.error || 'Something went wrong', data.fields);
   }
 
   if (!response.ok) {

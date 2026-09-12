@@ -34,7 +34,8 @@ export function clockTime(value) {
 
 export function presenceLabel(user) {
   if (user.isOnline) return 'Online now';
-  return user.lastSeen ? `Last seen ${relativeTime(user.lastSeen)}` : 'Never connected';
+  if (!user.lastSeen) return 'Never connected';
+  return `Last seen ${shortDate(user.lastSeen)} at ${clockTime(user.lastSeen)} (${relativeTime(user.lastSeen)})`;
 }
 
 export function distanceLabel(km) {

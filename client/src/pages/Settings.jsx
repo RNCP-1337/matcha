@@ -179,6 +179,7 @@ function ProfileForm({ user, onSaved }) {
 }
 
 function PasswordForm() {
+  const { user } = useApp();
   const [form, setForm] = useState({ currentPassword: '', password: '', confirm: '' });
   const [fields, setFields] = useState({});
   const [error, setError] = useState('');
@@ -226,6 +227,8 @@ function PasswordForm() {
 
       <Notice kind="error">{error}</Notice>
       <Notice>{message}</Notice>
+
+      <input type="text" name="username" autoComplete="username" value={user?.username || ''} readOnly hidden />
 
       <div className="field">
         <label htmlFor="currentPassword">Current password</label>

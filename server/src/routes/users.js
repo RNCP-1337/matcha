@@ -4,7 +4,7 @@ import { recomputeFame } from '../lib/fame.js';
 import { distanceKm } from '../lib/geo.js';
 import { badRequest, forbidden, notFound } from '../lib/httpError.js';
 import { pushNotification } from '../lib/notify.js';
-import { ageFrom, requireBody } from '../lib/validate.js';
+import { parseId, ageFrom, requireBody } from '../lib/validate.js';
 import { asyncRoute } from '../middleware/errors.js';
 import { requireAuth, requireCompleteProfile } from '../middleware/session.js';
 import { sendToUser } from '../realtime/hub.js';
@@ -16,7 +16,7 @@ router.use(requireAuth);
 
 async function loadTarget(req) {
   const identifier = req.params.identifier;
-  const numeric = Number.parseInt(identifier, 10);
+  const numeric = parseId(identifier);
 
   const target = await one(
     `SELECT u.*, p.filename AS profile_photo
@@ -187,7 +187,7 @@ router.post(
   '/:identifier/block',
   asyncRoute(async (req, res) => {
     const identifier = req.params.identifier;
-    const numeric = Number.parseInt(identifier, 10);
+    const numeric = parseId(identifier);
 
     const target = await one(
       'SELECT id FROM users WHERE (lower(username) = lower($1) OR id = $2) AND id <> $3',
@@ -216,7 +216,7 @@ router.delete(
   '/:identifier/block',
   asyncRoute(async (req, res) => {
     const identifier = req.params.identifier;
-    const numeric = Number.parseInt(identifier, 10);
+    const numeric = parseId(identifier);
 
     const target = await one('SELECT id FROM users WHERE lower(username) = lower($1) OR id = $2', [
       identifier,
